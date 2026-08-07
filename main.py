@@ -26,3 +26,7 @@ def health_check():
 def create_problem(problem: Problem):
     problems.append(problem)
     return problem
+
+@app.get("/problems")
+def get_problems():
+    return problems

@@ -12,8 +12,8 @@ This project is my **12-week main project** built as part of my preparation for 
 |---|---|
 | Python | ✅ Implemented |
 | FastAPI | ✅ Implemented |
-| Pydantic | 📋 Planned |
-| Python in-memory list (temporary storage) | 📋 Planned |
+| Pydantic | ✅ Implemented |
+| Python in-memory list (temporary storage) | ✅ Implemented |
 | PostgreSQL | 📋 Planned |
 | SQLAlchemy | 📋 Planned |
 | Pytest | 📋 Planned |
@@ -23,9 +23,9 @@ This project is my **12-week main project** built as part of my preparation for 
 ## Current Progress
 
 - [x] Day 1: `GET /health` endpoint
-- [ ] `Problem` data model (Pydantic)
-- [ ] `POST /problems` (in-memory list)
-- [ ] `GET /problems`
+- [x] `Problem` data model (Pydantic)
+- [x] `POST /problems` (in-memory list)
+- [x] `GET /problems`
 - [ ] `GET /problems/{id}`
 - [ ] `PUT /problems/{id}`
 - [ ] `DELETE /problems/{id}`
@@ -96,6 +96,17 @@ Response:
 ```json
 { "status": "ok" }
 ```
+### Create a Problem (implemented)
+
+POST /problems
+
+Creates and stores a validated problem in the temporary in-memory list.
+
+### View All Problems (implemented)
+
+GET /problems
+
+Returns all problems currently stored in memory.
 
 ## Running Locally
 
