@@ -22,11 +22,11 @@ This project is my **12-week main project** built as part of my preparation for 
 
 ## Current Progress
 
-- [x] Day 1: `GET /health` endpoint
+- [x] `GET /health` endpoint
 - [x] `Problem` data model (Pydantic)
 - [x] `POST /problems` (in-memory list)
 - [x] `GET /problems`
-- [ ] `GET /problems/{id}`
+- [x] `GET /problems/{id}`
 - [ ] `PUT /problems/{id}`
 - [ ] `DELETE /problems/{id}`
 - [ ] Migrate to PostgreSQL + SQLAlchemy
