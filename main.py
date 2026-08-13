@@ -1,4 +1,4 @@
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, HTTPException
 from pydantic import BaseModel, HttpUrl
 from typing import Literal
 
@@ -30,3 +30,10 @@ def create_problem(problem: Problem):
 @app.get("/problems")
 def get_problems():
     return problems
+
+@app.get("/problems/{number}")
+def get_problem(number:int):
+    for problem in problems:
+        if problem.number == number:
+            return problem
+    raise HTTPException(status_code=404,detail=f"Problem{number} not found")
