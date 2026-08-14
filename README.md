@@ -28,7 +28,7 @@ This project is my **12-week main project** built as part of my preparation for 
 - [x] `GET /problems`
 - [x] `GET /problems/{id}`
 - [x] `PUT /problems/{id}`
-- [ ] `DELETE /problems/{id}`
+- [x] `DELETE /problems/{id}`
 - [ ] Migrate to PostgreSQL + SQLAlchemy
 - [ ] User Progress data model and endpoints
 - [ ] User authentication (register / login / password hashing)
