@@ -45,3 +45,11 @@ def update_problem(number: int, updated_problem: Problem):
             problems[index] = updated_problem
             return updated_problem
     raise HTTPException(status_code=404, detail=f"Problem {number} not found")
+
+@app.delete("/problems/{number}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_problem(number: int):
+    for index, problem in enumerate(problems):
+        if problem.number == number:
+            del problems[index]
+            return
+    raise HTTPException(status_code=404, detail=f"Problem {number} not found")
