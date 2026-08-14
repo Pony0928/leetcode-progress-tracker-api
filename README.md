@@ -27,7 +27,7 @@ This project is my **12-week main project** built as part of my preparation for 
 - [x] `POST /problems` (in-memory list)
 - [x] `GET /problems`
 - [x] `GET /problems/{id}`
-- [ ] `PUT /problems/{id}`
+- [x] `PUT /problems/{id}`
 - [ ] `DELETE /problems/{id}`
 - [ ] Migrate to PostgreSQL + SQLAlchemy
 - [ ] User Progress data model and endpoints
