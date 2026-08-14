@@ -37,3 +37,11 @@ def get_problem(number:int):
         if problem.number == number:
             return problem
     raise HTTPException(status_code=404,detail=f"Problem{number} not found")
+
+@app.put("/problems/{number}")
+def update_problem(number: int, updated_problem: Problem):
+    for index, problem in enumerate(problems):
+        if problem.number == number:
+            problems[index] = updated_problem
+            return updated_problem
+    raise HTTPException(status_code=404, detail=f"Problem {number} not found")
