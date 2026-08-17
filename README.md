@@ -108,6 +108,8 @@ GET /problems
 
 Returns all problem records currently stored in the database.
 
+### View a Single Problem (implemented)
+
 GET /problems/{number}
 
 Returns the problem matching the given `number`. Returns a `404` error with a clear message if no matching problem exists.
