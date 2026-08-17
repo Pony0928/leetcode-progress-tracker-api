@@ -13,9 +13,8 @@ This project is my **12-week main project** built as part of my preparation for 
 | Python | ✅ Implemented |
 | FastAPI | ✅ Implemented |
 | Pydantic | ✅ Implemented |
-| Python in-memory list (temporary storage) | ✅ Implemented |
-| PostgreSQL | 📋 Planned |
-| SQLAlchemy | 📋 Planned |
+| PostgreSQL | ✅ Implemented |
+| SQLAlchemy | ✅ Implemented |
 | Pytest | 📋 Planned |
 | Docker | 📋 Planned |
 | Cloud deployment | 📋 Planned |
@@ -29,7 +28,7 @@ This project is my **12-week main project** built as part of my preparation for 
 - [x] `GET /problems/{id}`
 - [x] `PUT /problems/{id}`
 - [x] `DELETE /problems/{id}`
-- [ ] Migrate to PostgreSQL + SQLAlchemy
+- [x] Migrate to PostgreSQL + SQLAlchemy
 - [ ] User Progress data model and endpoints
 - [ ] User authentication (register / login / password hashing)
 - [ ] Pytest test suite (10–15+ tests)
@@ -49,20 +48,20 @@ This application answers the following questions:
 
 ## Development Roadmap
 
-### Stage 1: Basic FastAPI Application (current stage)
+### Stage 1: Basic FastAPI Application
 Uses a Python in-memory list instead of a database.
 
 - [x] Health-check endpoint
-- [ ] Create / view all / view one / update / delete problem records
-- [ ] Request data validation
-- [ ] Appropriate HTTP status codes
-- [ ] Clear error response when a problem does not exist
+- [x] Create / view all / view one / update / delete problem records
+- [x] Request data validation
+- [x] Appropriate HTTP status codes
+- [x] Clear error response when a problem does not exist
 
 ### Stage 2: PostgreSQL Database
-- Define database models with SQLAlchemy
-- Create and manage tables
-- Persist data, replacing the in-memory list
-- Query, update, and delete database records
+- [x] Define database models with SQLAlchemy
+- [x] Create and manage tables
+- [x] Persist data, replacing the in-memory list
+- [x] Query, update, and delete database records
 
 ### Stage 3: User Progress Tracking
 - Completion status and completion date
@@ -100,13 +99,31 @@ Response:
 
 POST /problems
 
-Creates and stores a validated problem in the temporary in-memory list.
+Validates the request body and inserts a new problem record into the PostgreSQL database. Returns the created problem, including its database-generated `id`, with status code `201`.
+
 
 ### View All Problems (implemented)
 
 GET /problems
 
-Returns all problems currently stored in memory.
+Returns all problem records currently stored in the database.
+
+GET /problems/{number}
+
+Returns the problem matching the given `number`. Returns a `404` error with a clear message if no matching problem exists.
+
+### Update a Problem (implemented)
+
+PUT /problems/{number}
+
+Replaces the existing problem record matching `number` with the provided data. Returns the updated problem with status code `200`, or a `404` error if the problem does not exist.
+
+### Delete a Problem (implemented)
+
+DELETE /problems/{number}
+
+Deletes the problem record matching `number`. Returns status code `204` with no response body, or a `404` error if the problem does not exist.
+
 
 ## Running Locally
 
