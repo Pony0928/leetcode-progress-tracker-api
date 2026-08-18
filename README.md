@@ -87,9 +87,14 @@ Uses a Python in-memory list instead of a database.
 - Review queue view
 
 ### Stage 6: Lightweight ML — Weak Topic Insight
-- A small scikit-learn model (logistic regression / decision tree) trained on the user's own attempt data (topic, time spent, first-try success, review count)
-- `/insights` endpoint returning topics the model flags as needing more review
-- Displayed as a module on the frontend dashboard
+- Attempt data aggregated per topic into features: average time spent, first-try success rate, total attempts, average review count, days since last practice, difficulty mix
+- Label (`is_weak`) defined by an explicit, documented rule (e.g. first-try success rate < 0.5 or average review count > 2) rather than an opaque target
+- Model: a CART decision tree (`DecisionTreeClassifier`), chosen for interpretability and because the dataset (one user's own topic-level history) is small — `max_depth` deliberately kept shallow to avoid overfitting
+- Evaluation: k-fold or leave-one-out cross-validation given the small sample size; recall is prioritized over precision, since missing a genuinely weak topic is worse than an extra false-positive suggestion
+- `/insights` endpoint returns not just which topics are flagged, but a short reason generated from the model's feature importances — not a hardcoded template
+- Feature extraction logic is shared between the training script and the API (`feature_utils.py`) to avoid train/predict feature mismatch
+- Retraining is manual/triggered, not real-time, since frequent retraining isn't justified at this data scale
+- *Optional stretch (Stage 6b):* a KMeans clustering view of topics with similar practice patterns, framed strictly as exploratory analysis on the dashboard — not a recommendation, to stay consistent with the scope note below
 - Scope note: this is a small applied ML feature built on top of real usage data, not a research-grade ML system — trained and evaluated on a single user's practice history
 
 ### Stage 7: Testing, Docker, and Deployment
