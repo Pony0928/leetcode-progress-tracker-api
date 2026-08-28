@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel, HttpUrl
 from typing import Literal
 from database import engine, get_db
-from models import Base, ProblemDB
+from models import Base, ProblemDB, UserDB
+from schemas import UserCreate, UserOut
+from auth import hash_password
 
 app = FastAPI(title="LeetCode Progress Tracker API")
 Base.metadata.create_all(bind=engine)
@@ -72,3 +74,18 @@ def delete_problem(number: int, db:Session = Depends(get_db)):
     db.delete(problem)
     db.commit()
     return
+
+@app.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
+def register(user:UserCreate,db:Session = Depends(get_db)):
+    existing_user = db.query(UserDB).filter(UserDB.email == user.email).first()
+    if existing_user:
+        raise HTTPException(status_code=400,detail="Email already registered")
+    new_user = UserDB(
+        email=user.email,
+        username=user.username,
+        hashed_password=hash_password(user.password),
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
