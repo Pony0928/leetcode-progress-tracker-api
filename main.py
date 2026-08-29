@@ -4,8 +4,8 @@ from pydantic import BaseModel, HttpUrl
 from typing import Literal
 from database import engine, get_db
 from models import Base, ProblemDB, UserDB
-from schemas import UserCreate, UserOut
-from auth import hash_password
+from schemas import UserCreate, UserOut, UserLogin
+from auth import hash_password, verify_password, create_access_token
 
 app = FastAPI(title="LeetCode Progress Tracker API")
 Base.metadata.create_all(bind=engine)
@@ -89,3 +89,12 @@ def register(user:UserCreate,db:Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@app.post("/login")
+def login(credentials: UserLogin, db: Session = Depends(get_db)):
+    user = db.query(UserDB).filter(UserDB.email == credentials.email).first()
+    if not user or not verify_password(credentials.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Incorrect email or password")
+
+    token = create_access_token(data={"sub": str(user.id)})
+    return {"access_token": token, "token_type": "bearer"}
