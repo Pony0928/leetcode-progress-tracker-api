@@ -1,5 +1,6 @@
 from fastapi import FastAPI, status, HTTPException, Depends
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from pydantic import BaseModel, HttpUrl
 from typing import Literal
 from database import engine, get_db
@@ -60,16 +61,51 @@ def health_check():
 
 
 @app.post("/problems", status_code=status.HTTP_201_CREATED)
-def create_problem(problem: Problem, db:Session = Depends(get_db)):
-    db_problem = ProblemDB(
-        number = problem.number,
-        title = problem.title,
-        difficulty = problem.difficulty,
-        topic = problem.topic,
-        url = str(problem.url),
+def create_problem(
+    problem: Problem,
+    db: Session = Depends(get_db),
+):
+    existing_problem = (
+        db.query(ProblemDB)
+        .filter(ProblemDB.number == problem.number)
+        .first()
     )
+
+    if existing_problem is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Problem {problem.number} already exists",
+        )
+
+    db_problem = ProblemDB(
+        number=problem.number,
+        title=problem.title,
+        difficulty=problem.difficulty,
+        topic=problem.topic,
+        url=str(problem.url),
+    )
+
     db.add(db_problem)
-    db.commit()
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+
+        duplicate = (
+            db.query(ProblemDB)
+            .filter(ProblemDB.number == problem.number)
+            .first()
+        )
+
+        if duplicate is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"Problem {problem.number} already exists",
+            )
+
+        raise
+
     db.refresh(db_problem)
     return db_problem
 
