@@ -92,8 +92,10 @@ Testing starts with each milestone rather than waiting until the end. Complete o
 - [x] Read `DATABASE_URL` from environment and fail clearly when it is missing.
 - [x] Add `.env.example` containing placeholders only.
 - [x] Verify database create/list, login, and `/me` after the configuration change.
-- [ ] Fail clearly when `SECRET_KEY` is missing (environment loading already exists).
-- [ ] Handle duplicate email, username, and problem numbers with explicit responses and transaction rollback. Duplicate-problem handling is the next task; completion is not yet confirmed.
+- [x] Fail clearly when `SECRET_KEY` is missing (environment loading already exists).
+- [x] Handle duplicate problem numbers with 409 responses and transaction rollback. Manually verified duplicate creation → 409, new creation → 201, and listing → 200 without duplicate records.
+- [ ] Complete duplicate email and username conflict handling with transaction rollback.
+- [ ] Add automated tests for concurrent duplicate problem creation.
 - [ ] Define response schemas and input bounds, including a password policy compatible with the selected hashing implementation.
 - [ ] Add Alembic migrations; replace startup table creation with migration commands and preserve existing data.
 - [ ] Reject conflicting problem-number values on update.
