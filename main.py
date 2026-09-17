@@ -146,18 +146,78 @@ def delete_problem(number: int, db:Session = Depends(get_db)):
     db.commit()
     return
 
-@app.post("/register", response_model=UserOut, status_code=status.HTTP_201_CREATED)
-def register(user:UserCreate,db:Session = Depends(get_db)):
-    existing_user = db.query(UserDB).filter(UserDB.email == user.email).first()
-    if existing_user:
-        raise HTTPException(status_code=400,detail="Email already registered")
+@app.post(
+    "/register",
+    response_model=UserOut,
+    status_code=status.HTTP_201_CREATED,
+)
+def register(
+    user: UserCreate,
+    db: Session = Depends(get_db),
+):
+    existing_email = (
+        db.query(UserDB)
+        .filter(UserDB.email == user.email)
+        .first()
+    )
+
+    if existing_email is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already registered",
+        )
+
+    existing_username = (
+        db.query(UserDB)
+        .filter(UserDB.username == user.username)
+        .first()
+    )
+
+    if existing_username is not None:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Username already taken",
+        )
+
     new_user = UserDB(
         email=user.email,
         username=user.username,
         hashed_password=hash_password(user.password),
     )
+
     db.add(new_user)
-    db.commit()
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+
+        duplicate_email = (
+            db.query(UserDB)
+            .filter(UserDB.email == user.email)
+            .first()
+        )
+
+        if duplicate_email is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Email already registered",
+            )
+
+        duplicate_username = (
+            db.query(UserDB)
+            .filter(UserDB.username == user.username)
+            .first()
+        )
+
+        if duplicate_username is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Username already taken",
+            )
+
+        raise
+
     db.refresh(new_user)
     return new_user
 
